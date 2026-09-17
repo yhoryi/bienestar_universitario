@@ -1,13 +1,12 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const pool = require('../config/db');
 const { obtenerUsuarioPorEmail } = require('../models/usuarioModel');
+const { enviarCorreoRecuperacion } = require('../config/mailer');
 
 // =========================================================
 // REGISTRO
-// Crea el usuario base y, si es estudiante, también su
-// registro en la tabla "estudiantes" — todo en una sola
-// transacción (si algo falla, no se guarda nada).
 // =========================================================
 const registrar = async (req, res) => {
   const {
@@ -15,22 +14,19 @@ const registrar = async (req, res) => {
     apellido,
     email,
     password,
-    tipo_usuario, // 'estudiante' | 'profesional' | 'admin'
-    // Campos extra si es estudiante:
+    tipo_usuario,
     codigo_estudiantil,
     carrera,
     facultad,
     semestre,
   } = req.body;
 
-  // Validación básica
   if (!nombre || !apellido || !email || !password || !tipo_usuario) {
     return res.status(400).json({ error: 'Faltan campos obligatorios' });
   }
 
   const client = await pool.connect();
   try {
-    // Verificar que el email no exista ya
     const existente = await obtenerUsuarioPorEmail(email);
     if (existente) {
       return res.status(409).json({ error: 'Ya existe una cuenta con ese email' });
@@ -38,7 +34,6 @@ const registrar = async (req, res) => {
 
     await client.query('BEGIN');
 
-    // Encriptar la contraseña antes de guardarla
     const passwordHash = await bcrypt.hash(password, 10);
 
     const insertUsuario = `
@@ -54,7 +49,6 @@ const registrar = async (req, res) => {
     ]);
     const usuario = rows[0];
 
-    // Si es estudiante, crear también su fila en "estudiantes"
     if (tipo_usuario === 'estudiante') {
       if (!codigo_estudiantil) {
         throw new Error('El código estudiantil es obligatorio para estudiantes');
@@ -68,7 +62,6 @@ const registrar = async (req, res) => {
 
     await client.query('COMMIT');
 
-    // Generar token para que quede logueado automáticamente tras registrarse
     const token = jwt.sign(
       { id: usuario.id, tipo_usuario: usuario.tipo_usuario },
       process.env.JWT_SECRET,
@@ -116,7 +109,6 @@ const login = async (req, res) => {
       { expiresIn: '7d' }
     );
 
-    // No devolver el hash de la contraseña al frontend
     delete usuario.password;
 
     res.json({ usuario, token });
@@ -126,4 +118,84 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { registrar, login };
+// =========================================================
+// SOLICITAR RECUPERACIÓN DE CONTRASEÑA
+// Genera un token temporal (válido 1 hora) y lo envía por correo
+// =========================================================
+const solicitarRecuperacion = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: 'El email es obligatorio' });
+  }
+
+  try {
+    const usuario = await obtenerUsuarioPorEmail(email);
+
+    // Por seguridad, respondemos igual exista o no el email
+    // (así nadie puede usar este endpoint para adivinar qué correos están registrados)
+    if (!usuario) {
+      return res.json({
+        mensaje: 'Si el email existe, se enviará un enlace de recuperación',
+      });
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expira = new Date(Date.now() + 60 * 60 * 1000); // 1 hora desde ahora
+
+    await pool.query(
+      'UPDATE usuarios SET reset_token = $1, reset_token_expira = $2 WHERE id = $3',
+      [token, expira, usuario.id]
+    );
+
+    await enviarCorreoRecuperacion(usuario.email, token);
+
+    res.json({ mensaje: 'Si el email existe, se enviará un enlace de recuperación' });
+  } catch (error) {
+    console.error('Error en solicitarRecuperacion:', error.message);
+    res.status(500).json({ error: 'Error al procesar la solicitud' });
+  }
+};
+
+// =========================================================
+// RESTABLECER CONTRASEÑA (usando el token recibido por correo)
+// =========================================================
+const restablecerPassword = async (req, res) => {
+  const { token, password } = req.body;
+
+  if (!token || !password) {
+    return res.status(400).json({ error: 'Token y nueva contraseña son obligatorios' });
+  }
+
+  try {
+    const { rows } = await pool.query(
+      'SELECT * FROM usuarios WHERE reset_token = $1',
+      [token]
+    );
+    const usuario = rows[0];
+
+    if (!usuario) {
+      return res.status(400).json({ error: 'Token inválido' });
+    }
+
+    if (new Date() > new Date(usuario.reset_token_expira)) {
+      return res.status(400).json({ error: 'El token ha expirado, solicita uno nuevo' });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    await pool.query(
+      `UPDATE usuarios
+       SET password = $1, reset_token = NULL, reset_token_expira = NULL
+       WHERE id = $2`,
+      [passwordHash, usuario.id]
+    );
+
+    res.json({ mensaje: 'Contraseña actualizada correctamente' });
+  } catch (error) {
+    console.error('Error en restablecerPassword:', error.message);
+    res.status(500).json({ error: 'Error al restablecer la contraseña' });
+  }
+};
+
+module.exports = { registrar, login, solicitarRecuperacion, restablecerPassword };
