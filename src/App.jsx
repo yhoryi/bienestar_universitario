@@ -1,6 +1,9 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
+import StudentDashboard from "./pages/student/StudentDashboard";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import ProfesionalDashboard from "./pages/professional/ProfesionalDashboard";
 import {
   Heart,
   Brain,
@@ -273,6 +276,21 @@ function App() {
       <Route
         path="/register"
         element={<RegisterPage />}
+      />
+
+      <Route
+        path="/dashboard"
+        element={<StudentDashboard />}
+      />
+
+      <Route
+        path="/admin"
+        element={<AdminDashboard />}
+      />
+
+      <Route
+        path="/profesional"
+        element={<ProfesionalDashboard />}
       />
 
     </Routes>

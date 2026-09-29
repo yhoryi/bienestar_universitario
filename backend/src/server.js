@@ -1,9 +1,14 @@
 const express = require('express');
+const cors = require('cors');
 require('dotenv').config();
 const pool = require('./config/db');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// CORS debe ir ANTES de las rutas, para que el navegador reciba
+// el permiso en toda petición (incluida la de "preflight" OPTIONS)
+app.use(cors());
 
 app.use(express.json());
 
@@ -21,6 +26,3 @@ pool.query('SELECT NOW()', (err, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
 });
-
-
-
