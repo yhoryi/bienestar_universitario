@@ -4,6 +4,8 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProfesionalDashboard from "./pages/professional/ProfesionalDashboard";
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import {
   Heart,
   Brain,
@@ -262,7 +264,8 @@ function App() {
   return (
 
     <Routes>
-
+<Route path="/recuperar-password" element={<ForgotPasswordPage />} />
+<Route path="/restablecer-password" element={<ResetPasswordPage />} />
       <Route
         path="/"
         element={<HomePage />}

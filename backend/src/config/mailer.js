@@ -1,22 +1,43 @@
-// Versión simplificada para desarrollo/proyecto académico:
-// en vez de enviar un correo real (lo cual requiere que la red permita
-// conexiones SMTP salientes, algo que muchas redes universitarias bloquean),
-// simplemente mostramos el enlace de recuperación en la consola del servidor.
+// Envía el código de recuperación por correo.
 //
-// Esto simula el correo sin depender de un servicio SMTP externo.
-// Si más adelante quieres enviar correos reales, solo hay que reemplazar
-// esta función por una integración con Gmail, SendGrid, etc.
+// - Si en el .env están EMAIL_USER y EMAIL_PASS, envía un correo real con Gmail
+//   (requiere instalar nodemailer: npm install nodemailer).
+// - Si no están definidos, solo muestra el código en la consola del servidor,
+//   útil para desarrollo o si la red bloquea las conexiones SMTP.
 
-const enviarCorreoRecuperacion = async (email, token) => {
-  const enlace = `http://localhost:5173/restablecer-password?token=${token}`;
+const enviarCorreoRecuperacion = async (email, codigo, minutos = 15) => {
+  const { EMAIL_USER, EMAIL_PASS } = process.env;
 
-  console.log('📧 ---- Simulación de correo de recuperación ----');
-  console.log(`Para: ${email}`);
-  console.log(`Enlace de recuperación (válido 1 hora): ${enlace}`);
-  console.log('------------------------------------------------');
+  if (!EMAIL_USER || !EMAIL_PASS) {
+    console.log('📧 ---- Simulación de correo de recuperación ----');
+    console.log(`Para: ${email}`);
+    console.log(`Código de verificación (válido ${minutos} minutos): ${codigo}`);
+    console.log('------------------------------------------------');
+    return;
+  }
 
-  // No lanza error ni intenta conectarse a ningún servidor externo
-  return Promise.resolve();
+  const nodemailer = require('nodemailer');
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: { user: EMAIL_USER, pass: EMAIL_PASS },
+  });
+
+  await transporter.sendMail({
+    from: `"Bienestar Universitario" <${EMAIL_USER}>`,
+    to: email,
+    subject: 'Tu código para recuperar la contraseña',
+    text: `Tu código de verificación es ${codigo}. Es válido por ${minutos} minutos. Si no lo solicitaste, ignora este mensaje.`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 420px; margin: auto; color: #172033;">
+        <h2 style="color: #1677c8;">Bienestar Universitario</h2>
+        <p>Usa este código para recuperar tu contraseña:</p>
+        <p style="font-size: 34px; font-weight: bold; letter-spacing: 8px; margin: 24px 0;">${codigo}</p>
+        <p style="color: #657286; font-size: 13px;">
+          Es válido por ${minutos} minutos. Si no lo solicitaste, ignora este mensaje.
+        </p>
+      </div>`,
+  });
 };
 
 module.exports = { enviarCorreoRecuperacion };

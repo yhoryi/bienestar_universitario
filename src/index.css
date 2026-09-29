@@ -555,3 +555,55 @@ button {
   }
 
 }
+/* =========================
+   AUTH - RECUPERAR CONTRASEÑA
+   (pegar al final de index.css)
+========================= */
+
+/* Mensaje de error (lo usa LoginPage y no estaba definido) */
+.auth-error {
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border: 1px solid #f5c2c0;
+  border-radius: 9px;
+  background: #fdeceb;
+  color: #b42318;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Botón deshabilitado mientras carga */
+.auth-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.auth-button:disabled:hover {
+  background: #1677c8;
+}
+
+/* Pantalla de confirmación (correo enviado / contraseña actualizada) */
+.auth-success-block {
+  text-align: center;
+}
+
+.auth-success-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #e2f4ee;
+  color: #168b6b;
+}
+
+.auth-success-block .auth-header p {
+  line-height: 1.6;
+}
+
+.auth-success-block .auth-header strong {
+  color: #344054;
+  word-break: break-all;
+}
