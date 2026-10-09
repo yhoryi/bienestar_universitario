@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Heart, LogOut } from "lucide-react";
+import CitasProfesional from "../../components/CitasProfesional";
+
 
 function ProfesionalDashboard() {
   const navigate = useNavigate();
@@ -27,6 +29,8 @@ function ProfesionalDashboard() {
       <p style={{ marginTop: "20px" }}>
         Bienvenido, {usuario?.nombre}. Aquí podrás ver tu disponibilidad y las citas asignadas.
       </p>
+  
+<CitasProfesional />
     </div>
   );
 }

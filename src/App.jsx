@@ -1,4 +1,4 @@
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import StudentDashboard from "./pages/student/StudentDashboard";
@@ -6,6 +6,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProfesionalDashboard from "./pages/professional/ProfesionalDashboard";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
+import { ProtectedRoute, PublicOnlyRoute } from "./components/ProtectedRoute";
 import {
   Heart,
   Brain,
@@ -260,47 +261,57 @@ function HomePage() {
 
 
 function App() {
-
   return (
-
     <Routes>
-<Route path="/recuperar-password" element={<ForgotPasswordPage />} />
-<Route path="/restablecer-password" element={<ResetPasswordPage />} />
-      <Route
-        path="/"
-        element={<HomePage />}
-      />
+      <Route path="/" element={<HomePage />} />
+
+      <Route path="/recuperar-password" element={<ForgotPasswordPage />} />
+      <Route path="/restablecer-password" element={<ResetPasswordPage />} />
 
       <Route
         path="/login"
-        element={<LoginPage />}
+        element={
+          <PublicOnlyRoute>
+            <LoginPage />
+          </PublicOnlyRoute>
+        }
       />
-
       <Route
         path="/register"
-        element={<RegisterPage />}
+        element={
+          <PublicOnlyRoute>
+            <RegisterPage />
+          </PublicOnlyRoute>
+        }
       />
 
       <Route
         path="/dashboard"
-        element={<StudentDashboard />}
+        element={
+          <ProtectedRoute roles={["estudiante"]}>
+            <StudentDashboard />
+          </ProtectedRoute>
+        }
       />
-
       <Route
         path="/admin"
-        element={<AdminDashboard />}
+        element={
+          <ProtectedRoute roles={["admin"]}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
       />
-
       <Route
         path="/profesional"
-        element={<ProfesionalDashboard />}
+        element={
+          <ProtectedRoute roles={["profesional"]}>
+            <ProfesionalDashboard />
+          </ProtectedRoute>
+        }
       />
-
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
-
   );
-
 }
-
 
 export default App;

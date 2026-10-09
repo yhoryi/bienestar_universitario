@@ -19,7 +19,12 @@ const enviarCorreoRecuperacion = async (email, codigo, minutos = 15) => {
   const nodemailer = require('nodemailer');
 
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    family: 4, // fuerza IPv4: algunas redes no tienen ruta IPv6 (error ENETUNREACH)
+    connectionTimeout: 15000,
+    greetingTimeout: 15000,
     auth: { user: EMAIL_USER, pass: EMAIL_PASS },
   });
 

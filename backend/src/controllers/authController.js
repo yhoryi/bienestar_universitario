@@ -1,12 +1,10 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
 const pool = require('../config/db');
 const { obtenerUsuarioPorEmail } = require('../models/usuarioModel');
-const { enviarCorreoRecuperacion } = require('../config/mailer');
 
 // =========================================================
-// REGISTRO
+// REGISTRO (público: solo crea estudiantes)
 // =========================================================
 const registrar = async (req, res) => {
   const {
@@ -14,15 +12,24 @@ const registrar = async (req, res) => {
     apellido,
     email,
     password,
-    tipo_usuario,
     codigo_estudiantil,
     carrera,
     facultad,
     semestre,
   } = req.body;
 
-  if (!nombre || !apellido || !email || !password || !tipo_usuario) {
+  // El registro público siempre crea estudiantes.
+  // Los profesionales y administradores los crea un admin.
+  const tipo_usuario = 'estudiante';
+
+  if (!nombre || !apellido || !email || !password) {
     return res.status(400).json({ error: 'Faltan campos obligatorios' });
+  }
+
+  if (!codigo_estudiantil) {
+    return res
+      .status(400)
+      .json({ error: 'El código estudiantil es obligatorio' });
   }
 
   const client = await pool.connect();
@@ -36,29 +43,19 @@ const registrar = async (req, res) => {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const insertUsuario = `
-      INSERT INTO usuarios (nombre, apellido, email, password, tipo_usuario)
-      VALUES ($1, $2, $3, $4, $5)
-      RETURNING id, nombre, apellido, email, tipo_usuario, creado_en`;
-    const { rows } = await client.query(insertUsuario, [
-      nombre,
-      apellido,
-      email,
-      passwordHash,
-      tipo_usuario,
-    ]);
+    const { rows } = await client.query(
+      `INSERT INTO usuarios (nombre, apellido, email, password, tipo_usuario)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id, nombre, apellido, email, tipo_usuario, creado_en`,
+      [nombre, apellido, email, passwordHash, tipo_usuario]
+    );
     const usuario = rows[0];
 
-    if (tipo_usuario === 'estudiante') {
-      if (!codigo_estudiantil) {
-        throw new Error('El código estudiantil es obligatorio para estudiantes');
-      }
-      await client.query(
-        `INSERT INTO estudiantes (usuario_id, codigo_estudiantil, carrera, facultad, semestre)
-         VALUES ($1, $2, $3, $4, $5)`,
-        [usuario.id, codigo_estudiantil, carrera, facultad, semestre]
-      );
-    }
+    await client.query(
+      `INSERT INTO estudiantes (usuario_id, codigo_estudiantil, carrera, facultad, semestre)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [usuario.id, codigo_estudiantil, carrera, facultad, semestre]
+    );
 
     await client.query('COMMIT');
 
@@ -118,84 +115,5 @@ const login = async (req, res) => {
   }
 };
 
-// =========================================================
-// SOLICITAR RECUPERACIÓN DE CONTRASEÑA
-// Genera un token temporal (válido 1 hora) y lo envía por correo
-// =========================================================
-const solicitarRecuperacion = async (req, res) => {
-  const { email } = req.body;
-
-  if (!email) {
-    return res.status(400).json({ error: 'El email es obligatorio' });
-  }
-
-  try {
-    const usuario = await obtenerUsuarioPorEmail(email);
-
-    // Por seguridad, respondemos igual exista o no el email
-    // (así nadie puede usar este endpoint para adivinar qué correos están registrados)
-    if (!usuario) {
-      return res.json({
-        mensaje: 'Si el email existe, se enviará un enlace de recuperación',
-      });
-    }
-
-    const token = crypto.randomBytes(32).toString('hex');
-    const expira = new Date(Date.now() + 60 * 60 * 1000); // 1 hora desde ahora
-
-    await pool.query(
-      'UPDATE usuarios SET reset_token = $1, reset_token_expira = $2 WHERE id = $3',
-      [token, expira, usuario.id]
-    );
-
-    await enviarCorreoRecuperacion(usuario.email, token);
-
-    res.json({ mensaje: 'Si el email existe, se enviará un enlace de recuperación' });
-  } catch (error) {
-    console.error('Error en solicitarRecuperacion:', error.message);
-    res.status(500).json({ error: 'Error al procesar la solicitud' });
-  }
-};
-
-// =========================================================
-// RESTABLECER CONTRASEÑA (usando el token recibido por correo)
-// =========================================================
-const restablecerPassword = async (req, res) => {
-  const { token, password } = req.body;
-
-  if (!token || !password) {
-    return res.status(400).json({ error: 'Token y nueva contraseña son obligatorios' });
-  }
-
-  try {
-    const { rows } = await pool.query(
-      'SELECT * FROM usuarios WHERE reset_token = $1',
-      [token]
-    );
-    const usuario = rows[0];
-
-    if (!usuario) {
-      return res.status(400).json({ error: 'Token inválido' });
-    }
-
-    if (new Date() > new Date(usuario.reset_token_expira)) {
-      return res.status(400).json({ error: 'El token ha expirado, solicita uno nuevo' });
-    }
-
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    await pool.query(
-      `UPDATE usuarios
-       SET password = $1, reset_token = NULL, reset_token_expira = NULL
-       WHERE id = $2`,
-      [passwordHash, usuario.id]
-    );
-
-    res.json({ mensaje: 'Contraseña actualizada correctamente' });
-  } catch (error) {
-    console.error('Error en restablecerPassword:', error.message);
-    res.status(500).json({ error: 'Error al restablecer la contraseña' });
-  }
-};
-
-module.exports = { registrar, login, solicitarRecuperacion, restablecerPassword };
+// La recuperación de contraseña vive en recuperacionController.js
+module.exports = { registrar, login };
