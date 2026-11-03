@@ -1,4 +1,5 @@
 const pool = require('../config/db');
+const { crearAlertaRiesgo } = require('../services/alertasService');
 
 // ---------------- configuración ----------------
 // Modelo principal y modelos de respaldo (por si el principal está saturado o no disponible)
@@ -26,8 +27,17 @@ const RECOMENDACIONES = ['agendar_cita', 'autocuidado', 'ninguna'];
 
 // Red de seguridad: si el mensaje trae estas señales, se trata como riesgo
 // aunque la IA no lo marque o falle la conexión con ella.
+// Se compara sin tildes ni mayúsculas. Es preferible avisar de más que de menos.
 const REGEX_RIESGO =
-  /(suicid|quitarme la vida|quiero morir|me quiero morir|matarme|acabar con (mi vida|todo)|no quiero (vivir|seguir viviendo)|hacerme da[ñn]o|autolesi|cortarme|mejor (muerto|muerta)|desaparecer para siempre|abusa(n|ron|ba)? de m[ií]|me (pega|maltrata|violaron))/i;
+  /(suicid|quitarme la vida|quitarse la vida|terminar con mi vida|acabar con (mi vida|todo)|me voy a (morir|matar|suicidar)|(quiero|queria|prefiero|deseo) (morir|morirme|estar muerto|estar muerta|desaparecer)|no (quiero|puedo|vale la pena) (seguir )?(viviendo|vivir)|ya no (quiero|puedo) (seguir|mas)|no (aguanto|soporto) mas|mejor (muerto|muerta|sin mi)|desaparecer para siempre|(hacerme|me (quiero|voy a|podria|puedo) hacer|me hago|me hice) (dano|mal)|autolesi|cortarme|lastimarme|abusa(n|ron|ba)? de mi|me (pega|maltrata|violaron|violo))/;
+
+const esRiesgo = (texto) =>
+  REGEX_RIESGO.test(
+    texto
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+  );
 
 const RESPUESTA_CRISIS =
   'Lo que me cuentas es muy importante y no tienes que pasarlo sola/o. ' +
@@ -171,7 +181,7 @@ const consultarIA = async (sistema, mensajes) => {
       // 400 o 403 son problemas de configuración (clave, formato): probar otro modelo no ayuda
       if (!temporal && error.status !== 404 && !error.vacio) throw error;
 
-      console.warn(`Gemini ${modelo} no respondió (${error.status || error.name}), probando el siguiente...`);
+      console.warn(`Gemini ${modelo} no respondió: ${String(error.message).slice(0, 220)}`);
     }
   }
 
@@ -242,7 +252,7 @@ const enviarMensaje = async (req, res) => {
     mensajes.push({ role: 'user', content: mensaje });
 
     const checkin = await resumenCheckin(perfil.id);
-    const riesgoPorPalabras = REGEX_RIESGO.test(mensaje);
+    const riesgoPorPalabras = esRiesgo(mensaje);
 
     let resultado;
     try {
@@ -254,7 +264,10 @@ const enviarMensaje = async (req, res) => {
 
       if (!riesgoPorPalabras) {
         return res.status(502).json({
-          error: 'No pude responder en este momento. Intenta de nuevo en unos minutos.',
+          error:
+            'No pude responder en este momento. Intenta de nuevo en unos minutos. ' +
+            'Si lo que sientes es muy intenso, puedes llamar a la Línea 106 (gratuita, 24 horas) ' +
+            'o al 123 si estás en peligro.',
         });
       }
       // Si hay señales de riesgo, nunca se deja sin respuesta
@@ -277,11 +290,24 @@ const enviarMensaje = async (req, res) => {
       [perfil.id, mensaje, resultado.respuesta, categoria, recomendacion]
     );
 
+    // Si hay riesgo, se avisa al equipo profesional. Un fallo aquí nunca debe afectar la respuesta al estudiante.
+    let alertado = false;
+    if (riesgo) {
+      try {
+        const alerta = await crearAlertaRiesgo(perfil.id);
+        alertado = alerta.creada || alerta.motivo === 'reciente';
+        if (!alertado) console.warn('Alerta de riesgo no enviada:', alerta.motivo);
+      } catch (errorAlerta) {
+        console.error('No se pudo crear la alerta de riesgo:', errorAlerta.message);
+      }
+    }
+
     res.status(201).json({
       id: rows[0].id,
       respuesta: resultado.respuesta,
       riesgo,
       recomendacion,
+      alertado,
     });
   } catch (error) {
     console.error('Error en enviarMensaje:', error.message);

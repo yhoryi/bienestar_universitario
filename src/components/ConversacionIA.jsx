@@ -60,7 +60,7 @@ function ConversacionIA({ nombre, onIrACitas }) {
       const datos = await api("/mensaje", { method: "POST", body: { mensaje } });
       setMensajes((prev) => [
         ...prev,
-        { id: `i${datos.id}`, rol: "ia", texto: datos.respuesta, riesgo: datos.riesgo },
+        { id: `i${datos.id}`, rol: "ia", texto: datos.respuesta, riesgo: datos.riesgo, alertado: datos.alertado },
       ]);
     } catch (err) {
       // Se quita el mensaje que no se pudo enviar y se devuelve al cuadro de texto
@@ -93,7 +93,8 @@ function ConversacionIA({ nombre, onIrACitas }) {
         <span>
           Estás hablando con una inteligencia artificial. Orienta y acompaña, pero no reemplaza a un
           profesional. Tus mensajes se guardan para dar continuidad a la conversación y se procesan
-          con un servicio de IA externo.
+          con un servicio de IA externo. Si detectamos que podrías estar en peligro, el equipo de
+          Bienestar recibirá un aviso con tus datos de contacto para comunicarse contigo.
         </span>
       </div>
 
@@ -128,6 +129,11 @@ function ConversacionIA({ nombre, onIrACitas }) {
                       Puedes llamar ahora a la <b>Línea 106</b> (apoyo en salud mental, gratuita, 24
                       horas) o al <b>123</b> si estás en peligro inmediato.
                     </p>
+                    {m.alertado && (
+                      <p>
+                        <b>Ya avisamos al equipo de Bienestar</b> para que pueda comunicarse contigo.
+                      </p>
+                    )}
                     <button className="btn-apoyo" onClick={onIrACitas}>
                       Pedir una cita con Bienestar
                     </button>

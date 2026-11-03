@@ -1596,3 +1596,684 @@ button {
     max-width: 92%;
   }
 }
+/* =========================
+   PANEL DEL PROFESIONAL
+   (pegar al final de index.css, debajo de student.css y conversacion.css)
+   Reutiliza el layout y los colores del panel del estudiante.
+========================= */
+
+.modulo.modulo-ancho {
+  max-width: 920px;
+}
+
+/* contadores del menú lateral */
+.contador-nav {
+  margin-left: auto;
+  min-width: 22px;
+  padding: 2px 7px;
+  border-radius: 20px;
+  background: #e08e00;
+  color: white;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ---------- tarjetas de resumen ---------- */
+.stats {
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.stat-card {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: white;
+  border: 1px solid var(--borde);
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(22, 139, 107, 0.06);
+}
+
+.stat-card strong {
+  margin-top: 8px;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.stat-card span {
+  color: var(--gris);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.stat-icono {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.stat-card.azul .stat-icono { background: var(--azul-claro); color: var(--azul); }
+.stat-card.ambar .stat-icono { background: #fff4d6; color: #8a6100; }
+.stat-card.verde .stat-icono { background: var(--verde-claro); color: var(--verde); }
+.stat-card.gris .stat-icono { background: #eef1f4; color: #52606d; }
+
+.aviso-pendientes {
+  width: 100%;
+  margin-bottom: 18px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #f1d58f;
+  border-radius: 14px;
+  background: #fff8e6;
+  color: #7a5600;
+  font-size: 14px;
+  text-align: left;
+  transition: 0.15s;
+}
+
+.aviso-pendientes span {
+  flex: 1;
+}
+
+.aviso-pendientes:hover {
+  background: #fff3d1;
+}
+
+/* ---------- listas de citas ---------- */
+.lista-citas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fecha-etiqueta {
+  margin-bottom: 6px;
+  color: var(--gris);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.item-cita {
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid #e7edf3;
+  border-radius: 12px;
+  background: #fbfdfc;
+}
+
+.item-hora {
+  min-width: 58px;
+  padding: 6px 8px;
+  border-radius: 9px;
+  background: var(--verde-claro);
+  color: var(--verde-oscuro);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.item-datos {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.item-datos strong {
+  font-size: 14px;
+}
+
+.item-datos span {
+  color: var(--gris);
+  font-size: 12px;
+}
+
+/* ---------- agenda ---------- */
+.dia-agenda h2.dia-titulo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-transform: capitalize;
+}
+
+.hoy-tag {
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--azul);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: none;
+}
+
+/* ---------- disponibilidad ---------- */
+.form-franja {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr auto;
+  align-items: end;
+  gap: 14px;
+}
+
+.form-franja .form-group {
+  margin-bottom: 0;
+}
+
+.form-franja .boton-franja {
+  width: auto;
+  height: 46px;
+  margin-top: 0;
+  padding: 0 22px;
+}
+
+.semana {
+  display: flex;
+  flex-direction: column;
+}
+
+.dia-fila {
+  padding: 13px 0;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border-bottom: 1px solid #edf2f0;
+}
+
+.dia-fila:last-child {
+  border-bottom: none;
+}
+
+.dia-nombre {
+  width: 96px;
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.dia-franjas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sin-franja {
+  color: #a3adb8;
+  font-size: 13px;
+}
+
+.franja {
+  padding: 7px 8px 7px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 22px;
+  background: var(--verde-claro);
+  color: var(--verde-oscuro);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.franja button {
+  padding: 4px;
+  display: flex;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--verde-oscuro);
+  opacity: 0.7;
+}
+
+.franja button:hover {
+  background: #fdeceb;
+  color: #b42318;
+  opacity: 1;
+}
+
+/* ---------- notificaciones ---------- */
+.notif-cabecera {
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.notif-cabecera h2 {
+  margin-bottom: 0;
+}
+
+.notif-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notif-item {
+  width: 100%;
+  padding: 13px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  background: #f3faf7;
+  text-align: left;
+  transition: 0.15s;
+}
+
+.notif-item:hover {
+  border-color: var(--verde);
+}
+
+.notif-item.leida {
+  background: white;
+  color: var(--gris);
+  cursor: default;
+}
+
+.notif-punto {
+  width: 9px;
+  height: 9px;
+  margin-top: 6px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--verde);
+}
+
+.notif-item.leida .notif-punto {
+  background: #d3dbe2;
+}
+
+.notif-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.notif-texto small {
+  color: #8a97a5;
+  font-size: 11px;
+}
+
+.notif-vacio {
+  padding: 34px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #a3adb8;
+  font-size: 14px;
+}
+
+/* ---------- perfil ---------- */
+.perfil-cabecera {
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.perfil-cabecera h2 {
+  margin-bottom: 2px;
+  font-size: 20px;
+}
+
+.perfil-cabecera span {
+  color: var(--gris);
+  font-size: 13px;
+}
+
+.avatar.grande {
+  width: 62px;
+  height: 62px;
+  font-size: 24px;
+}
+
+.perfil-datos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 24px;
+}
+
+.perfil-datos dt {
+  margin-bottom: 4px;
+  color: var(--gris);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.perfil-datos dd {
+  font-size: 14px;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.perfil-nota {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid #edf2f0;
+  color: var(--gris);
+  font-size: 12px;
+}
+
+/* ---------- celular y tablet ---------- */
+@media (max-width: 860px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-franja {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .form-franja .form-group:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .form-franja .boton-franja {
+    grid-column: 1 / -1;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .contador-nav {
+    margin-left: 4px;
+  }
+}
+
+@media (max-width: 520px) {
+  .dia-fila {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .perfil-datos {
+    grid-template-columns: 1fr;
+  }
+
+  .item-cita {
+    flex-wrap: wrap;
+  }
+}
+/* =========================
+   ALERTAS DE RIESGO (versión suave)
+   Va al final de index.css, debajo de profesional.css.
+   Si ya habías pegado la versión anterior de alertas.css, BÓRRALA primero.
+   No depende de variables: funciona aunque falte otro bloque de estilos.
+========================= */
+
+/* contador rojo del menú lateral */
+.contador-nav.urgente {
+  background: #e8776e;
+  animation: latido-alerta 1.8s infinite;
+}
+
+@keyframes latido-alerta {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232, 119, 110, 0.5); }
+  50% { box-shadow: 0 0 0 6px rgba(232, 119, 110, 0); }
+}
+
+/* ---------- la alerta dentro de Notificaciones ---------- */
+.alerta-item {
+  padding: 14px;
+  border: 1px solid #f6cfcb;
+  border-left: 4px solid #e8776e;
+  border-radius: 12px;
+  background: #fff3f2;
+}
+
+.alerta-fila {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.alerta-icono {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #fde3e0;
+  color: #d9554b;
+}
+
+.alerta-texto {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.alerta-titulo {
+  color: #3d2724;
+}
+
+.alerta-etiqueta {
+  margin-left: 8px;
+  padding: 2px 9px;
+  border-radius: 20px;
+  background: #e8776e;
+  color: white;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.alerta-detalle {
+  color: #7a4a46;
+  font-size: 13px;
+}
+
+.alerta-texto small {
+  color: #9a6c68;
+  font-size: 11px;
+}
+
+.alerta-datos {
+  margin-top: 12px;
+  padding: 10px 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  gap: 10px 18px;
+  border: 1px solid #f6dedb;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.alerta-datos dt {
+  margin-bottom: 2px;
+  color: #9a6c68;
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.alerta-datos dd {
+  color: #3d2724;
+  font-size: 12.5px;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.alerta-acciones {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.alerta-boton {
+  padding: 8px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #e8776e;
+  border-radius: 9px;
+  background: white;
+  color: #c4443a;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.15s;
+}
+
+.alerta-boton:hover {
+  background: #fdeceb;
+}
+
+.alerta-boton.principal {
+  background: #e8776e;
+  color: white;
+}
+
+.alerta-boton.principal:hover {
+  background: #dd6a60;
+}
+
+/* alerta ya atendida: se apaga hacia gris */
+.alerta-item.atendida {
+  border-color: #e7edf3;
+  border-left-color: #d3dbe2;
+  background: white;
+}
+
+.alerta-item.atendida .alerta-icono {
+  background: #eef1f4;
+  color: #8a97a5;
+}
+
+.alerta-item.atendida .alerta-titulo,
+.alerta-item.atendida .alerta-detalle {
+  color: #7b8794;
+}
+
+.alerta-item.atendida .alerta-datos {
+  border-color: #edf1f5;
+}
+
+/* ---------- aviso emergente al entrar al panel ---------- */
+.aviso-alerta {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 50;
+  width: 350px;
+  max-width: calc(100vw - 32px);
+  padding: 14px 12px 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid #f6cfcb;
+  border-left: 5px solid #e8776e;
+  border-radius: 14px;
+  background: white;
+  box-shadow: 0 14px 34px rgba(208, 69, 59, 0.18);
+  animation: entrar-aviso 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.15);
+}
+
+@keyframes entrar-aviso {
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.aviso-icono {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #fde3e0;
+  color: #d9554b;
+  animation: latido-alerta 1.8s infinite;
+}
+
+.aviso-cuerpo {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.aviso-cuerpo strong {
+  color: #b83a31;
+  font-size: 14px;
+}
+
+.aviso-cuerpo span {
+  color: #3d2724;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.aviso-cuerpo small {
+  color: #9a6c68;
+  font-size: 11px;
+}
+
+.aviso-ver {
+  margin-top: 8px;
+  padding: 7px 13px;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  border-radius: 9px;
+  background: #e8776e;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  transition: 0.15s;
+}
+
+.aviso-ver:hover {
+  background: #dd6a60;
+}
+
+.aviso-cerrar {
+  padding: 4px;
+  display: flex;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #9a6c68;
+}
+
+.aviso-cerrar:hover {
+  background: #fdeceb;
+  color: #b83a31;
+}
+
+@media (max-width: 520px) {
+  .aviso-alerta {
+    top: 12px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+    max-width: none;
+  }
+}

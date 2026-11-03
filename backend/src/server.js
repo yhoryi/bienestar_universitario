@@ -16,6 +16,9 @@ app.use('/api/auth', authRoutes);
  app.use('/api/citas', require('./routes/citasRoutes'));
    app.use('/api/conversacion', require('./routes/conversacionRoutes'));
       app.use('/api/bienestar', require('./routes/bienestarRoutes'));
+         app.use('/api/profesional', require('./routes/profesionalRoutes'));
+   app.use('/api/notificaciones', require('./routes/notificacionesRoutes'));
+   app.use('/api/admin', require('./routes/adminRoutes'));
 pool.query('SELECT NOW()', (err, res) => {
   if (err) {
     console.error('❌ Error conectando a la base de datos:', err);
@@ -23,6 +26,7 @@ pool.query('SELECT NOW()', (err, res) => {
     console.log('✅ Conectado a PostgreSQL:', res.rows[0].now);
   }
 });
+  require('./config/esquema').asegurarEsquema();
 
 app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);

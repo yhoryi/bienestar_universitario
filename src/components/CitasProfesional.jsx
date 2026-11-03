@@ -11,7 +11,7 @@ const FILTROS = [
   { valor: "todas", texto: "Todas" },
 ];
 
-function CitasProfesional() {
+function CitasProfesional({ onCambio }) {
   const [citas, setCitas] = useState([]);
   const [filtro, setFiltro] = useState("pendiente");
   const [error, setError] = useState("");
@@ -30,6 +30,7 @@ function CitasProfesional() {
     try {
       await api(`/${id}/estado`, { method: "PATCH", body: { estado } });
       cargar();
+      onCambio?.(); // avisa al panel para actualizar los contadores
     } catch (err) {
       setError(err.message);
     }

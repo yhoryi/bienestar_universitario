@@ -314,6 +314,8 @@ const todasLasCitas = async (req, res) => {
 };
 
 module.exports = {
+  horariosLibres,
+  notificar,
   listarServicios,
   listarProfesionales,
   obtenerHorarios,
