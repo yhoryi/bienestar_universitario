@@ -1,0 +1,20 @@
+/* Va en: src/components/admin/InformesAdmin.css  (archivo nuevo; usa prefijo inf- para no chocar con AdminDashboard.css) */
+.inf-filtros { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px; margin-bottom: 14px; }
+.inf-filtros label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600; }
+.inf-filtros input { padding: 8px 10px; border: 1px solid #d9e3e0; border-radius: 10px; font: inherit; }
+
+.inf-resumen { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 14px; }
+.inf-resumen .ad-card { display: flex; flex-direction: column; gap: 4px; }
+.inf-resumen span { font-size: 13px; opacity: 0.7; }
+.inf-resumen strong { font-size: 26px; }
+
+.inf-rejilla { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; margin-bottom: 14px; }
+.inf-rejilla h3, .inf-cabecera h3 { margin: 0 0 12px; font-size: 16px; }
+.inf-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+
+.inf-barras { display: flex; flex-direction: column; gap: 10px; }
+.inf-barra-fila { display: grid; grid-template-columns: minmax(90px, 140px) 1fr 36px; align-items: center; gap: 10px; font-size: 13px; }
+.inf-barra-etiqueta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-transform: capitalize; }
+.inf-barra-pista { height: 10px; background: #eef3f1; border-radius: 999px; overflow: hidden; }
+.inf-barra-relleno { height: 100%; background: linear-gradient(90deg, #168b6b, #1677c8); border-radius: 999px; transition: width 0.3s; }
+.inf-barra-fila b { text-align: right; }

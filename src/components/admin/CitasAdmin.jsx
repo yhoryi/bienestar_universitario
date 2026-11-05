@@ -211,6 +211,22 @@ function CitasAdmin() {
     }
   };
 
+  // DELETE: borra la cita definitivamente (los demás botones solo cambian su estado)
+  const eliminar = async (cita) => {
+    if (!window.confirm("¿Eliminar esta cita definitivamente? Esta acción no se puede deshacer.")) return;
+    setOcupada(cita.id);
+    setAviso(null);
+    try {
+      await api(`/citas/${cita.id}`, { metodo: "DELETE" });
+      setAviso({ tipo: "ok", texto: "Cita eliminada." });
+      await recargar();
+    } catch (e) {
+      setAviso({ tipo: "error", texto: e.message });
+    } finally {
+      setOcupada(null);
+    }
+  };
+
   const alCrear = async () => {
     setMostrarForm(false);
     setAviso({ tipo: "ok", texto: "Cita programada correctamente." });
@@ -301,7 +317,14 @@ function CitasAdmin() {
                           {a.texto}
                         </button>
                       ))}
-                      {!ACCIONES[c.estado] && <span className="ad-nota">—</span>}
+                      <button
+                        type="button"
+                        className="ad-btn ad-btn-chico ad-btn-peligro"
+                        disabled={ocupada === c.id}
+                        onClick={() => eliminar(c)}
+                      >
+                        Eliminar
+                      </button>
                     </div>
                   </td>
                 </tr>

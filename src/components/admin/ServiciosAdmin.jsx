@@ -1,3 +1,4 @@
+// Va en: src/components/admin/ServiciosAdmin.jsx  (reemplaza el actual: es el tuyo + botón Eliminar)
 import { useState } from "react";
 import { Plus, X } from "lucide-react";
 import { api, useDatos } from "./adminApi";
@@ -49,10 +50,25 @@ function ServiciosAdmin() {
     }
   };
 
+  // DELETE: el backend responde 409 si el servicio tiene profesionales o citas
+  const eliminar = async (s) => {
+    if (!window.confirm(`¿Eliminar el servicio "${s.nombre}"? Esta acción no se puede deshacer.`)) return;
+    setAviso(null);
+    try {
+      await api(`/servicios/${s.id}`, { metodo: "DELETE" });
+      setAviso({ tipo: "ok", texto: `Servicio "${s.nombre}" eliminado.` });
+      await recargar();
+    } catch (err) {
+      setAviso({ tipo: "error", texto: err.message });
+    }
+  };
+
   return (
     <div>
       <div className="ad-barra-herramientas">
-        <span className="ad-nota">Servicios que ofrece Bienestar Universitario.</span>
+        <span className="ad-nota">
+          Servicios que ofrece Bienestar Universitario. Solo se puede eliminar uno sin profesionales ni citas.
+        </span>
         <button type="button" className="ad-btn ad-btn-lleno" onClick={() => setMostrarForm((v) => !v)}>
           <Plus size={16} /> Nuevo servicio
         </button>
@@ -143,15 +159,30 @@ function ServiciosAdmin() {
                     <td>{s.profesionales}</td>
                     <td>{s.citas}</td>
                     <td>
-                      <button
-                        type="button"
-                        className="ad-btn ad-btn-chico"
-                        onClick={() =>
-                          setEditando({ id: s.id, nombre: s.nombre, descripcion: s.descripcion || "" })
-                        }
-                      >
-                        Editar
-                      </button>
+                      <div className="ad-acciones">
+                        <button
+                          type="button"
+                          className="ad-btn ad-btn-chico"
+                          onClick={() =>
+                            setEditando({ id: s.id, nombre: s.nombre, descripcion: s.descripcion || "" })
+                          }
+                        >
+                          Editar
+                        </button>
+                        <button
+                          type="button"
+                          className="ad-btn ad-btn-chico"
+                          disabled={s.profesionales > 0 || s.citas > 0}
+                          title={
+                            s.profesionales > 0 || s.citas > 0
+                              ? "Tiene profesionales o citas asociados"
+                              : "Eliminar servicio"
+                          }
+                          onClick={() => eliminar(s)}
+                        >
+                          Eliminar
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 )

@@ -12,6 +12,10 @@ const asegurarEsquema = async () => {
        ADD COLUMN IF NOT EXISTS estudiante_id INTEGER REFERENCES estudiantes(id) ON DELETE SET NULL`
     );
     console.log('✅ Notificaciones listas para alertas de riesgo');
+
+    // Número de teléfono de contacto (opcional) de cualquier usuario
+    await pool.query(`ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS telefono VARCHAR(20)`);
+    console.log('✅ Columna usuarios.telefono lista');
   } catch (error) {
     console.error('❌ No se pudo preparar la tabla de notificaciones:', error.message);
   }

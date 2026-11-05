@@ -1,3 +1,4 @@
+// Va en: src/pages/admin/AdminDashboard.jsx  (reemplaza el actual: es el tuyo + sección Informes)
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -8,12 +9,14 @@ import {
   Stethoscope,
   GraduationCap,
   ClipboardList,
+  BarChart3,
 } from "lucide-react";
 import ResumenAdmin from "../../components/admin/ResumenAdmin";
 import CitasAdmin from "../../components/admin/CitasAdmin";
 import ProfesionalesAdmin from "../../components/admin/ProfesionalesAdmin";
 import EstudiantesAdmin from "../../components/admin/EstudiantesAdmin";
 import ServiciosAdmin from "../../components/admin/ServiciosAdmin";
+import InformesAdmin from "../../components/admin/InformesAdmin";
 import "../../components/admin/AdminDashboard.css";
 
 const SECCIONES = [
@@ -22,6 +25,7 @@ const SECCIONES = [
   { id: "profesionales", texto: "Profesionales", icono: Stethoscope, Vista: ProfesionalesAdmin },
   { id: "estudiantes", texto: "Estudiantes", icono: GraduationCap, Vista: EstudiantesAdmin },
   { id: "servicios", texto: "Servicios", icono: ClipboardList, Vista: ServiciosAdmin },
+  { id: "informes", texto: "Informes", icono: BarChart3, Vista: InformesAdmin },
 ];
 
 function AdminDashboard() {

@@ -1,12 +1,14 @@
 const pool = require('../config/db');
 
 // CREAR
-const crearCita = async ({ estudiante_id, profesional_id, servicio_id, fecha, hora, motivo }) => {
+// "estado" es opcional: si no se envía, la cita queda 'pendiente' (flujo del estudiante).
+// El administrador la crea directamente como 'confirmada'.
+const crearCita = async ({ estudiante_id, profesional_id, servicio_id, fecha, hora, motivo, estado }) => {
   const query = `
-    INSERT INTO citas (estudiante_id, profesional_id, servicio_id, fecha, hora, motivo)
-    VALUES ($1, $2, $3, $4, $5, $6)
+    INSERT INTO citas (estudiante_id, profesional_id, servicio_id, fecha, hora, motivo, estado)
+    VALUES ($1, $2, $3, $4, $5, $6, COALESCE($7, 'pendiente'))
     RETURNING *`;
-  const values = [estudiante_id, profesional_id, servicio_id, fecha, hora, motivo];
+  const values = [estudiante_id, profesional_id, servicio_id, fecha, hora, motivo, estado || null];
   const { rows } = await pool.query(query, values);
   return rows[0];
 };

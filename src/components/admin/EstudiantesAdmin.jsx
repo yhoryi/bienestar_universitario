@@ -7,6 +7,7 @@ const FORM_VACIO = {
   nombre: "",
   apellido: "",
   email: "",
+  telefono: "",
   codigo_estudiantil: "",
   carrera: "",
   facultad: "",
@@ -105,6 +106,9 @@ function EstudiantesAdmin() {
             <Campo etiqueta="Correo">
               <input type="email" value={form.email} onChange={cambiar("email")} />
             </Campo>
+            <Campo etiqueta="Teléfono (opcional)">
+              <input type="tel" placeholder="300 000 0000" value={form.telefono} onChange={cambiar("telefono")} />
+            </Campo>
             <Campo etiqueta="Código estudiantil">
               <input value={form.codigo_estudiantil} onChange={cambiar("codigo_estudiantil")} />
             </Campo>
@@ -151,6 +155,8 @@ function EstudiantesAdmin() {
                   <th>Nombre</th>
                   <th>Código</th>
                   <th>Correo</th>
+                  <th>Teléfono</th>
+                  <th>Facultad</th>
                   <th>Carrera</th>
                   <th>Sem.</th>
                   <th>Estado</th>
@@ -165,6 +171,8 @@ function EstudiantesAdmin() {
                     </td>
                     <td>{x.codigo_estudiantil}</td>
                     <td>{x.email}</td>
+                    <td>{x.telefono || "—"}</td>
+                    <td>{x.facultad || "—"}</td>
                     <td>{x.carrera || "—"}</td>
                     <td>{x.semestre || "—"}</td>
                     <td>

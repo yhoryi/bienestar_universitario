@@ -12,6 +12,8 @@ function RegisterPage() {
     apellido: "",
     email: "",
     telefono: "",
+    facultad: "",
+    semestre: "",
     codigo_estudiantil: "",
     password: "",
     confirmPassword: "",
@@ -61,6 +63,9 @@ function RegisterPage() {
           nombre: formData.nombre,
           apellido: formData.apellido,
           email: formData.email,
+          telefono: formData.telefono,
+          facultad: formData.facultad,
+          semestre: formData.semestre,
           password: formData.password,
           tipo_usuario: "estudiante",
           codigo_estudiantil: formData.codigo_estudiantil,
@@ -154,6 +159,32 @@ function RegisterPage() {
               value={formData.codigo_estudiantil}
               onChange={handleChange}
             />
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label>Facultad</label>
+              <input
+                type="text"
+                name="facultad"
+                placeholder="Ej: Ingenierías"
+                value={formData.facultad}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Semestre</label>
+              <input
+                type="number"
+                name="semestre"
+                min="1"
+                max="20"
+                placeholder="Ej: 5"
+                value={formData.semestre}
+                onChange={handleChange}
+              />
+            </div>
           </div>
 
           <div className="form-group">
