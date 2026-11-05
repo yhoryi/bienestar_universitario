@@ -69,7 +69,7 @@ function CitasProfesional({ onCambio }) {
               <div className="cita-item" key={c.id}>
                 <div className="cita-info">
                   <strong>
-                    {formatearFecha(c.fecha)} · {c.hora}
+                    {formatearFecha(c.fecha)} · {c.hora} – {c.hora_fin}
                   </strong>
                   <span>
                     {c.estudiante_nombre} {c.estudiante_apellido}

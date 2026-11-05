@@ -1,6 +1,6 @@
 const pool = require('../config/db');
 
-const DURACION_MIN = 60; // duración de cada cita en minutos
+const DURACION_MIN = 30; // duración de cada cita en minutos (si cambia, cámbiala también en el frontend)
 const DIAS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 const FECHA_VALIDA = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -69,6 +69,7 @@ const horariosLibres = async (profesionalId, fecha) => {
 
 const SELECT_CITA = `
   c.id, to_char(c.fecha, 'YYYY-MM-DD') AS fecha, to_char(c.hora, 'HH24:MI') AS hora,
+  to_char(c.hora + interval '${DURACION_MIN} minutes', 'HH24:MI') AS hora_fin,
   c.estado, c.motivo, c.creado_en, s.nombre AS servicio`;
 
 // ---------- catálogos (cualquier usuario con sesión) ----------

@@ -5,6 +5,15 @@ import { api, formatearFecha, ETIQUETAS_ESTADO } from "../services/citasApi";
 
 const hoy = () => new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD
 
+// Cada cita dura 30 minutos (debe coincidir con DURACION_MIN del backend)
+const DURACION_MIN = 30;
+const finDe = (hora) => {
+  const [h, m] = hora.split(":").map(Number);
+  const t = h * 60 + m + DURACION_MIN;
+  return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
+};
+
+
 function CitasEstudiante() {
   const [servicios, setServicios] = useState([]);
   const [profesionales, setProfesionales] = useState([]);
@@ -185,7 +194,7 @@ function CitasEstudiante() {
                       className={`slot ${form.hora === h ? "activo" : ""}`}
                       onClick={() => cambiar("hora", h)}
                     >
-                      {h}
+                      {h} – {finDe(h)}
                     </button>
                   ))}
                 </div>
@@ -220,7 +229,7 @@ function CitasEstudiante() {
               <div className="cita-item" key={c.id}>
                 <div className="cita-info">
                   <strong>
-                    {formatearFecha(c.fecha)} · {c.hora}
+                    {formatearFecha(c.fecha)} · {c.hora} – {c.hora_fin}
                   </strong>
                   <span>
                     {c.servicio} con {c.profesional_nombre} {c.profesional_apellido}

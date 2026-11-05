@@ -3,6 +3,14 @@ import { Plus, X } from "lucide-react";
 import { api, useDatos, hoy, formatearFecha, ETIQUETAS_ESTADO } from "./adminApi";
 import { Aviso, Vacio, Campo } from "./adminUi";
 
+// Cada cita dura 30 minutos (debe coincidir con DURACION_MIN del backend)
+const DURACION_MIN = 30;
+const finDe = (hora) => {
+  const [h, m] = hora.split(":").map(Number);
+  const t = h * 60 + m + DURACION_MIN;
+  return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
+};
+
 // Mismas transiciones que valida el backend
 const ACCIONES = {
   pendiente: [
@@ -142,7 +150,7 @@ function FormularioCita({ onCreada, onCerrar }) {
             </option>
             {horarios.map((h) => (
               <option key={h} value={h}>
-                {h}
+                {h} – {finDe(h)}
               </option>
             ))}
           </select>
@@ -277,7 +285,7 @@ function CitasAdmin() {
             <thead>
               <tr>
                 <th>Fecha</th>
-                <th>Hora</th>
+                <th>Horario</th>
                 <th>Estudiante</th>
                 <th>Profesional</th>
                 <th>Servicio</th>
@@ -290,7 +298,7 @@ function CitasAdmin() {
               {filtradas.map((c) => (
                 <tr key={c.id}>
                   <td>{formatearFecha(c.fecha)}</td>
-                  <td>{c.hora}</td>
+                  <td>{c.hora} – {c.hora_fin}</td>
                   <td>
                     {c.estudiante_nombre} {c.estudiante_apellido}
                   </td>
